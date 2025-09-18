@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Trumeter Public API Docs</title>
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist/swagger-ui.css" />
+  <style>
+    body { margin: 0; background: #f9f9f9; }
+    .swagger-ui .topbar { background-color: #000; }
+  </style>
+</head>
+<body>
+  <div id="swagger-ui"></div>
+  <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+  <script>
+    const spec = `openapi: 3.0.0
+info:
+  title: Trumeter Public API
+  version: 1.0.0
+  description: >
+    This API allows authenticated users to retrieve device telemetry data, fetch historical data,
+    and list registered devices linked to their account. All endpoints require a valid bearer token.
+servers:
+  - url: https://publicapiproject.azurewebsites.net
+paths:
+  /api/currentData:
+    get:
+      summary: Get current data for a device
+      description: >
+        Returns the most recent telemetry values for a device based on the provided serial number.
+        Requires a valid authorization token.
+      parameters:
+        - name: device_serial_no
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The serial number of the device.
+      responses:
+        '200':
+          description: Successfully retrieved current data.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                example:
+                  temperature:
+                    - ts: 1693330400000
+                      value: "22.5"
+                  voltage:
+                    - ts: 1693330400000
+                      value: "220"
+        '400':
+          description: Missing device serial number or invalid authorization header.
+        '401':
+          description: Authorization token has expired.
+        '403':
+          description: Invalid token, access disabled, or request quota exhausted.
+        '404':
+          description: Device not found or unauthorized access.
+        '429':
+          description: Rate limit exceeded.
+        '502':
+          description: Upstream error.
+        '500':
+          description: Internal server/database error.
+      security:
+        - XAuthorization: []
+
+  /api/historicData:
+    get:
+      summary: Get historical telemetry data for a device
+      description: >
+        Returns historical telemetry values for a specific device over a defined time range.
+        Supports optional aggregation with interval-based rollups.
+      parameters:
+        - name: device_serial_no
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The serial number of the device.
+        - name: device_key
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The telemetry key to retrieve (e.g., "temperature").
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          description: Start timestamp in ISO 8601 format.
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          description: End timestamp in ISO 8601 format.
+        - name: agg
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [AVG, MIN, MAX, SUM, COUNT, NONE]
+          description: Optional aggregation function.
+        - name: interval
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Required if \`agg\` is used. Aggregation interval in milliseconds.
+      responses:
+        '200':
+          description: Successfully retrieved historical data.
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  temperature:
+                    - ts: 1693330400000
+                      value: "22.5"
+                    - ts: 1693334000000
+                      value: "21.8"
+        '400':
+          description: Invalid request parameters (e.g., missing fields, date format, interval).
+        '401':
+          description: Authorization token has expired.
+        '403':
+          description: Invalid token, access disabled, or quota exhausted.
+        '404':
+          description: Device not found or unauthorized access.
+        '429':
+          description: Rate limit exceeded.
+        '502':
+          description: Upstream error.
+        '500':
+          description: Internal server/database error.
+      security:
+        - XAuthorization: []
+
+  /api/deviceList:
+    get:
+      summary: Get list of registered devices
+      description: >
+        Returns a list of all registered devices associated with the customer's account.
+        Each device includes serial number, model type, and optionally user-defined labels and recent activity.
+      responses:
+        '200':
+          description: Successfully retrieved list of devices.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    serialNumber:
+                      type: string
+                      example: "vista-fm-123456"
+                    model:
+                      type: string
+                      example: "VT-FLOW"
+                    userDeviceName:
+                      type: string
+                      example: "Flow Meter - Plant 4"
+                    active:
+                      type: boolean
+                      example: true
+                    lastTelemetryTs:
+                      type: string
+                      example: "1693330000000"
+        '400':
+          description: Missing or invalid authorization token.
+        '403':
+          description: Token is invalid, access is disabled, or quota is exhausted.
+        '429':
+          description: Rate limit exceeded.
+        '502':
+          description: Upstream service error.
+        '500':
+          description: Internal server error.
+      security:
+        - XAuthorization: []
+
+components:
+  securitySchemes:
+    XAuthorization:
+      type: apiKey
+      in: header
+      name: X-Authorization`;
+    const ui = SwaggerUIBundle({
+      spec: jsyaml.load(spec),
+      dom_id: '#swagger-ui',
+      presets: [SwaggerUIBundle.presets.apis],
+      layout: "BaseLayout",
+      requestInterceptor: function (req) {
+        const token = req.headers["X-Authorization"];
+        if (token && !token.startsWith("Bearer ")) {
+          req.headers["X-Authorization"] = "Bearer " + token;
+        }
+        return req;
+      }
+    });
+  </script>
+</body>
+</html>
