@@ -25,6 +25,17 @@
     .copy-btn{position:absolute;top:.5rem;right:.5rem;}
     .screenshot{margin-top:1rem;border-radius:.75rem;border:1px solid #e5e7eb;box-shadow:0 4px 12px rgba(0,0,0,0.1);}
     figcaption{font-size:0.85rem;color:#6b7280;margin-top:0.5rem;}
+    .accordion-content {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+    details[open] .accordion-content {
+      max-height: 800px; /* large enough to fit content */
+      opacity: 1;
+    }
+
   </style>
 </head>
 <body class="bg-[var(--brand-light)] text-slate-800">
@@ -89,7 +100,7 @@
                 <span class="font-medium">Step 1 – Sign up (if needed)</span>
                 <svg class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
               </summary>
-              <div class="pt-4 text-slate-600">
+              <div class="accordion-content py-4 text-slate-600">
                 <ol class="list-decimal pl-5 space-y-1">
                   <li>Visit <a class="text-[var(--brand-primary)] underline" href="https://cloud.trumeter.com" target="_blank" rel="noreferrer">cloud.trumeter.com</a>.</li>
                   <li>Create an account using your company email.</li>
@@ -108,7 +119,7 @@
                 <span class="font-medium">Step 2 – Generate an API Token</span>
                 <svg class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
               </summary>
-              <div class="pt-4 text-slate-600">
+              <div class="accordion-content pt-4 text-slate-600">
                 <ol class="list-decimal pl-5 space-y-1">
                   <li>On the <strong>Dashboard</strong>, click the <strong>Key</strong> icon.</li>
                   <li>In the <strong>API Token</strong> widget, click <strong>Generate Token</strong>.</li>
@@ -126,7 +137,7 @@
                 <span class="font-medium">Step 3 – Manage Your Token</span>
                 <svg class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
               </summary>
-              <div class="pt-4 text-slate-600 space-y-2">
+              <div class="accordion-content pt-4 text-slate-600 space-y-2">
                 <p>The widget shows:</p>
                 <ul class="list-disc pl-5">
                   <li>Token with <strong>Copy</strong> button</li>
@@ -147,7 +158,7 @@
                 <span class="font-medium">Step 4 – Copy Your Token</span>
                 <svg class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
               </summary>
-              <div class="pt-4 text-slate-600">
+              <div class="accordion-content pt-4 text-slate-600">
                 <p>Click <strong>Copy</strong>. You’ll use this token in the <span class="kbd">Authorization</span> header as a Bearer token.</p>
                 <figure>
                   <img src="assets/token-copy.png" alt="Copy token screenshot" class="screenshot"/>
@@ -208,7 +219,7 @@
         <h3 class="text-xl font-semibold">5) Additional Notes</h3>
         <ul class="mt-3 list-disc pl-6 text-slate-700 space-y-1">
           <li>API quotas and rate limits apply per customer account.</li>
-          <li>Use epoch milliseconds for timestamps.</li>
+          <li>Use ISO 8601 format for timestamps.</li>
           <li>Errors follow a standard schema (see Swagger: 400, 401, 404, 429, 500).</li>
         </ul>
       </div>
