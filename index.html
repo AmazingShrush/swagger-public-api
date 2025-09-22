@@ -1,213 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Trumeter Public API Docs</title>
-  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist/swagger-ui.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Trumeter Public API – User Guide</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { margin: 0; background: #f9f9f9; }
-    .swagger-ui .topbar { background-color: #000; }
+    :root{
+      --brand-primary:#0b4ea2;
+      --brand-secondary:#00b0ff;
+      --brand-dark:#0b1b2b;
+      --brand-bg:#0b1b2b;
+      --brand-light:#f5f7fb;
+    }
+    .brand-gradient{background:linear-gradient(135deg,var(--brand-bg) 0%, var(--brand-primary) 60%, var(--brand-secondary) 100%);} 
+    .glass{backdrop-filter:saturate(140%) blur(8px); background:rgba(255,255,255,0.08);}
+    .card{background:#fff;border-radius:1rem;box-shadow:0 10px 30px rgba(13,27,43,.08);} 
+    .kbd{display:inline-block;padding:.125rem .375rem;border-radius:.375rem;background:#0f172a;color:#e2e8f0;font-size:.75rem;}
+    details[open] summary svg{transform:rotate(180deg);} 
+    details > summary{list-style:none}
+    details > summary::-webkit-details-marker{display:none}
+    .code{background:#0b1020;color:#e5e7eb;border-radius:.75rem;padding:1rem;overflow:auto;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-size:.9rem;}
+    .copy-btn{position:absolute;top:.5rem;right:.5rem;}
+    .screenshot{margin-top:1rem;border-radius:.75rem;border:1px solid #e5e7eb;box-shadow:0 4px 12px rgba(0,0,0,0.1);}
+    figcaption{font-size:0.85rem;color:#6b7280;margin-top:0.5rem;}
   </style>
 </head>
-<body>
-  <div id="swagger-ui"></div>
-  <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+<body class="bg-[var(--brand-light)] text-slate-800">
+  <!-- Header / Hero -->
+  <header class="brand-gradient text-white">
+    <div class="max-w-6xl mx-auto px-6 py-12 md:py-16">
+      <nav class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <img alt="Trumeter logo" src="assets/trumeter-cloud-blackback2.png" style="width: 250px;"/>
+          <!-- <span class="text-xl font-semibold tracking-wide">Trumeter</span> -->
+        </div>
+        <a href="#support" class="text-sm underline/50 hover:underline">Support</a>
+      </nav>
+      <div class="mt-10 md:mt-16 grid md:grid-cols-2 gap-8 items-center">
+        <div>
+          <h1 class="text-3xl md:text-5xl font-bold leading-tight">Public API – User Guide</h1>
+          <p class="mt-4 text-white/90 text-lg">Secure, read-only access to your device metadata and telemetry. Integrate Trumeter data into your applications, dashboards, or BI tools.</p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="#get-started" class="px-5 py-3 rounded-xl bg-white text-slate-900 font-medium shadow hover:shadow-md transition">Get Started</a>
+            <a href="swagger.html" target="_blank" class="px-5 py-3 rounded-xl glass border border-white/15 text-white font-medium hover:bg-white/10 transition">Open Swagger</a>
+          </div>
+        </div>
+        <div class="relative">
+          <div class="absolute -inset-6 rounded-3xl bg-white/10 blur-2xl"></div>
+          <div class="relative p-6 rounded-2xl glass border border-white/15">
+            <p class="text-white/90">Endpoints included</p>
+            <ul class="mt-3 space-y-2 text-white">
+              <li>• <span class="font-medium">GET</span> /deviceList <span class="text-white/70">(DeviceList)</span></li>
+              <li>• <span class="font-medium">GET</span> /data/currentData <span class="text-white/70">(CurrentData)</span></li>
+              <li>• <span class="font-medium">GET</span> /data/historicalData <span class="text-white/70">(HistoricData)</span></li>
+            </ul>
+            <p class="mt-4 text-white/80 text-sm">Auth: <span class="kbd">X-Authorization:</span> <span class="kbd">Bearer &lt;token&gt;</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-6">
+    <!-- Intro -->
+    <section class="-mt-12 relative z-10" id="get-started">
+      <div class="card p-6 md:p-8">
+        <h2 class="text-2xl md:text-3xl font-bold">1) Introduction</h2>
+        <p class="mt-3 text-slate-600">The <strong>Trumeter Public API</strong> provides secure, read-only access to your device metadata and telemetry so you can automate reporting, integrate with BI tools, and build custom monitoring solutions.</p>
+        <ul class="mt-4 list-disc pl-6 text-slate-700">
+          <li>Automate device data retrieval</li>
+          <li>Integrate current & historic telemetry into external tools</li>
+          <li>Build custom dashboards & alerts</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Steps with accordions -->
+    <section class="mt-8 md:mt-12">
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="card p-6 md:p-8">
+          <h3 class="text-xl font-semibold">2) Getting Started</h3>
+          <div class="mt-4 space-y-4">
+            <!-- Step 1 -->
+            <details class="group border border-slate-200 rounded-xl p-4 open:shadow">
+              <summary class="flex cursor-pointer items-center justify-between"> 
+                <span class="font-medium">Step 1 – Sign up (if needed)</span>
+                <svg class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </summary>
+              <div class="pt-4 text-slate-600">
+                <ol class="list-decimal pl-5 space-y-1">
+                  <li>Visit <a class="text-[var(--brand-primary)] underline" href="https://cloud.trumeter.com" target="_blank" rel="noreferrer">cloud.trumeter.com</a>.</li>
+                  <li>Create an account using your company email.</li>
+                  <li>Verify your email and sign in.</li>
+                </ol>
+                <figure>
+                  <img src="assets/signup.png" alt="Sign up page screenshot" class="screenshot"/>
+                  <figcaption>Figure 1: Sign-up page</figcaption>
+                </figure>
+              </div>
+            </details>
+
+            <!-- Step 2 -->
+            <details class="group border border-slate-200 rounded-xl p-4 open:shadow">
+              <summary class="flex cursor-pointer items-center justify-between"> 
+                <span class="font-medium">Step 2 – Generate an API Token</span>
+                <svg class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </summary>
+              <div class="pt-4 text-slate-600">
+                <ol class="list-decimal pl-5 space-y-1">
+                  <li>On the <strong>Dashboard</strong>, click the <strong>Key</strong> icon.</li>
+                  <li>In the <strong>API Token</strong> widget, click <strong>Generate Token</strong>.</li>
+                </ol>
+                <figure>
+                  <img src="assets/token-generate.png" alt="Generate token widget screenshot" class="screenshot"/>
+                  <figcaption>Figure 2: Generate token widget</figcaption>
+                </figure>
+              </div>
+            </details>
+
+            <!-- Step 3 -->
+            <details class="group border border-slate-200 rounded-xl p-4 open:shadow">
+              <summary class="flex cursor-pointer items-center justify-between"> 
+                <span class="font-medium">Step 3 – Manage Your Token</span>
+                <svg class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </summary>
+              <div class="pt-4 text-slate-600 space-y-2">
+                <p>The widget shows:</p>
+                <ul class="list-disc pl-5">
+                  <li>Token with <strong>Copy</strong> button</li>
+                  <li><strong>Expiry date</strong></li>
+                  <li><strong>Enable/Disable</strong> switch</li>
+                  <li><strong>Regenerate</strong> token</li>
+                </ul>
+                <figure>
+                  <img src="assets/token-manage.png" alt="Manage token widget screenshot" class="screenshot"/>
+                  <figcaption>Figure 3: Manage token options</figcaption>
+                </figure>
+              </div>
+            </details>
+
+            <!-- Step 4 -->
+            <details class="group border border-slate-200 rounded-xl p-4 open:shadow">
+              <summary class="flex cursor-pointer items-center justify-between"> 
+                <span class="font-medium">Step 4 – Copy Your Token</span>
+                <svg class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </summary>
+              <div class="pt-4 text-slate-600">
+                <p>Click <strong>Copy</strong>. You’ll use this token in the <span class="kbd">Authorization</span> header as a Bearer token.</p>
+                <figure>
+                  <img src="assets/token-copy.png" alt="Copy token screenshot" class="screenshot"/>
+                  <figcaption>Figure 4: Copying the token</figcaption>
+                </figure>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <!-- API Examples -->
+        <div class="card p-6 md:p-8">
+          <h3 class="text-xl font-semibold">3) Using the API</h3>
+          <p class="mt-2 text-slate-600">Include your token in every request:</p>
+          <div class="relative mt-4">
+            <button class="copy-btn px-3 py-1 rounded-md text-xs bg-white/10 border border-white/20 text-white hidden" data-copy="curl-1">Copy</button>
+            <pre id="curl-1" class="code"><code>curl -X GET "https://api.trumeter.cloud/[endpoint]" \
+  -H "X-Authorization: Bearer &lt;your_token_here&gt;"</code></pre>
+          </div>
+
+          <h4 class="mt-6 font-medium">DeviceList</h4>
+          <pre class="code"><code>curl -X GET "https://api.trumeter.cloud/deviceList" \
+  -H "X-Authorization: Bearer &lt;your_token_here&gt;"</code></pre>
+
+          <h4 class="mt-6 font-medium">CurrentData</h4>
+          <pre class="code"><code>curl -X GET "https://api.trumeter.cloud/data/currentdata?device_serial_no=1234567890" \
+  -H "X-Authorization: Bearer &lt;your_token_here&gt;"</code></pre>
+
+          <h4 class="mt-6 font-medium">HistoricData</h4>
+          <pre class="code"><code>curl -X GET "https://api.trumeter.cloud/data/historicalData?device_serial_no=1234567890&amp;key=voltage&amp;from=2025-05-29T10:36:00&amp;to=2025-05-30T10:36:30" \
+  -H "X-Authorization: Bearer &lt;your_token_here&gt;"</code></pre>
+
+          <p class="mt-6 text-sm text-slate-500">Responses include rate limit headers: <span class="kbd">X-RateLimit-Limit</span>, <span class="kbd">X-RateLimit-Remaining</span>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Swagger section -->
+    <section id="swagger" class="mt-8 md:mt-12">
+      <div class="card p-6 md:p-8">
+        <h3 class="text-xl font-semibold">4) Swagger Documentation</h3>
+        <ol class="mt-3 list-decimal pl-6 text-slate-700 space-y-2">
+          <li>Open the Swagger UI (documentation URL provided by Trumeter).</li>
+          <li>Click the <strong>Authorize</strong> button.</li>
+          <li>Paste your token (without the word <em>Bearer</em>—the UI will prepend it).</li>
+          <li>Choose an endpoint → <strong>Try it out</strong> → <strong>Execute</strong>.</li>
+        </ol>
+        <figure class="mt-4">
+          <img src="assets/swagger-auth.png" alt="Swagger authorize screenshot" class="screenshot"/>
+          <figcaption>Figure 5: Authorizing with your token in Swagger</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Notes & Support -->
+    <section class="mt-8 md:mt-12 grid md:grid-cols-2 gap-6" id="support">
+      <div class="card p-6 md:p-8">
+        <h3 class="text-xl font-semibold">5) Additional Notes</h3>
+        <ul class="mt-3 list-disc pl-6 text-slate-700 space-y-1">
+          <li>API quotas and rate limits apply per customer account.</li>
+          <li>Use epoch milliseconds for timestamps.</li>
+          <li>Errors follow a standard schema (see Swagger: 400, 401, 404, 429, 500).</li>
+        </ul>
+      </div>
+      <div class="card p-6 md:p-8">
+        <h3 class="text-xl font-semibold">6) Support</h3>
+        <p class="mt-2 text-slate-600">For assistance:</p>
+        <ul class="mt-2 text-slate-700">
+          <li><strong>Email:</strong> <a class="text-[var(--brand-primary)] underline" href="mailto:support@trumeter.com">support@trumeter.com</a></li>
+          <li><strong>Portal:</strong> <a class="text-[var(--brand-primary)] underline" href="https://cloud.trumeter.com" target="_blank" rel="noreferrer">cloud.trumeter.com</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <footer class="py-12 text-center text-sm text-slate-500">
+      © <span id="year"></span> Trumeter. All rights reserved.
+    </footer>
+  </main>
+
   <script>
-    const spec = `openapi: 3.0.0
-info:
-  title: Trumeter Public API
-  version: 1.0.0
-  description: >
-    This API allows authenticated users to retrieve device telemetry data, fetch historical data,
-    and list registered devices linked to their account. All endpoints require a valid bearer token.
-servers:
-  - url: https://publicapiproject.azurewebsites.net
-paths:
-  /api/currentData:
-    get:
-      summary: Get current data for a device
-      description: >
-        Returns the most recent telemetry values for a device based on the provided serial number.
-        Requires a valid authorization token.
-      parameters:
-        - name: device_serial_no
-          in: query
-          required: true
-          schema:
-            type: string
-          description: The serial number of the device.
-      responses:
-        '200':
-          description: Successfully retrieved current data.
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties: true
-                example:
-                  temperature:
-                    - ts: 1693330400000
-                      value: "22.5"
-                  voltage:
-                    - ts: 1693330400000
-                      value: "220"
-        '400':
-          description: Missing device serial number or invalid authorization header.
-        '401':
-          description: Authorization token has expired.
-        '403':
-          description: Invalid token, access disabled, or request quota exhausted.
-        '404':
-          description: Device not found or unauthorized access.
-        '429':
-          description: Rate limit exceeded.
-        '502':
-          description: Upstream error.
-        '500':
-          description: Internal server/database error.
-      security:
-        - XAuthorization: []
-
-  /api/historicData:
-    get:
-      summary: Get historical telemetry data for a device
-      description: >
-        Returns historical telemetry values for a specific device over a defined time range.
-        Supports optional aggregation with interval-based rollups.
-      parameters:
-        - name: device_serial_no
-          in: query
-          required: true
-          schema:
-            type: string
-          description: The serial number of the device.
-        - name: device_key
-          in: query
-          required: true
-          schema:
-            type: string
-          description: The telemetry key to retrieve (e.g., "temperature").
-        - name: from
-          in: query
-          required: true
-          schema:
-            type: string
-            format: date-time
-          description: Start timestamp in ISO 8601 format.
-        - name: to
-          in: query
-          required: true
-          schema:
-            type: string
-            format: date-time
-          description: End timestamp in ISO 8601 format.
-        - name: agg
-          in: query
-          required: false
-          schema:
-            type: string
-            enum: [AVG, MIN, MAX, SUM, COUNT, NONE]
-          description: Optional aggregation function.
-        - name: interval
-          in: query
-          required: false
-          schema:
-            type: integer
-          description: Required if \`agg\` is used. Aggregation interval in milliseconds.
-      responses:
-        '200':
-          description: Successfully retrieved historical data.
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  temperature:
-                    - ts: 1693330400000
-                      value: "22.5"
-                    - ts: 1693334000000
-                      value: "21.8"
-        '400':
-          description: Invalid request parameters (e.g., missing fields, date format, interval).
-        '401':
-          description: Authorization token has expired.
-        '403':
-          description: Invalid token, access disabled, or quota exhausted.
-        '404':
-          description: Device not found or unauthorized access.
-        '429':
-          description: Rate limit exceeded.
-        '502':
-          description: Upstream error.
-        '500':
-          description: Internal server/database error.
-      security:
-        - XAuthorization: []
-
-  /api/deviceList:
-    get:
-      summary: Get list of registered devices
-      description: >
-        Returns a list of all registered devices associated with the customer's account.
-        Each device includes serial number, model type, and optionally user-defined labels and recent activity.
-      responses:
-        '200':
-          description: Successfully retrieved list of devices.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    serialNumber:
-                      type: string
-                      example: "vista-fm-123456"
-                    model:
-                      type: string
-                      example: "VT-FLOW"
-                    userDeviceName:
-                      type: string
-                      example: "Flow Meter - Plant 4"
-                    active:
-                      type: boolean
-                      example: true
-                    lastTelemetryTs:
-                      type: string
-                      example: "1693330000000"
-        '400':
-          description: Missing or invalid authorization token.
-        '403':
-          description: Token is invalid, access is disabled, or quota is exhausted.
-        '429':
-          description: Rate limit exceeded.
-        '502':
-          description: Upstream service error.
-        '500':
-          description: Internal server error.
-      security:
-        - XAuthorization: []
-
-components:
-  securitySchemes:
-    XAuthorization:
-      type: apiKey
-      in: header
-      name: X-Authorization`;
-    const ui = SwaggerUIBundle({
-      spec: jsyaml.load(spec),
-      dom_id: '#swagger-ui',
-      presets: [SwaggerUIBundle.presets.apis],
-      layout: "BaseLayout",
-      requestInterceptor: function (req) {
-        const token = req.headers["X-Authorization"];
-        if (token && !token.startsWith("Bearer ")) {
-          req.headers["X-Authorization"] = "Bearer " + token;
-        }
-        return req;
-      }
-    });
+    document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
