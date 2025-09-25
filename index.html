@@ -64,9 +64,9 @@
           <div class="relative p-6 rounded-2xl glass border border-white/15">
             <p class="text-white/90">Endpoints included</p>
             <ul class="mt-3 space-y-2 text-white">
-              <li>• <span class="font-medium">GET</span> /deviceList <span class="text-white/70">(DeviceList)</span></li>
-              <li>• <span class="font-medium">GET</span> /data/currentData <span class="text-white/70">(CurrentData)</span></li>
-              <li>• <span class="font-medium">GET</span> /data/historicalData <span class="text-white/70">(HistoricData)</span></li>
+              <li>• <span class="font-medium">GET</span> /api/deviceList <span class="text-white/70">(Device List)</span></li>
+              <li>• <span class="font-medium">GET</span> /api/currentData <span class="text-white/70">(Current Data)</span></li>
+              <li>• <span class="font-medium">GET</span> /api/historicalData <span class="text-white/70">(Historical Data)</span></li>
             </ul>
             <p class="mt-4 text-white/80 text-sm">Auth: <span class="kbd">X-Authorization:</span> <span class="kbd">Bearer &lt;token&gt;</span></p>
           </div>
@@ -181,15 +181,15 @@
           </div>
 
           <h4 class="mt-6 font-medium">DeviceList</h4>
-          <pre class="code"><code>curl -X GET "https://api.trumeter.cloud/deviceList" \
+          <pre class="code"><code>curl -X GET "https://api.trumeter.cloud/api/deviceList" \
   -H "X-Authorization: Bearer &lt;your_token_here&gt;"</code></pre>
 
           <h4 class="mt-6 font-medium">CurrentData</h4>
-          <pre class="code"><code>curl -X GET "https://api.trumeter.cloud/data/currentdata?device_serial_no=1234567890" \
+          <pre class="code"><code>curl -X GET "https://api.trumeter.cloud/api/currentdata?device_serial_no=1234567890" \
   -H "X-Authorization: Bearer &lt;your_token_here&gt;"</code></pre>
 
           <h4 class="mt-6 font-medium">HistoricData</h4>
-          <pre class="code"><code>curl -X GET "https://api.trumeter.cloud/data/historicalData?device_serial_no=1234567890&amp;key=voltage&amp;from=2025-05-29T10:36:00&amp;to=2025-05-30T10:36:30" \
+          <pre class="code"><code>curl -X GET "https://api.trumeter.cloud/api/historicalData?device_serial_no=1234567890&amp;key=voltage&amp;from=2025-05-29T10:36:00&amp;to=2025-05-30T10:36:30" \
   -H "X-Authorization: Bearer &lt;your_token_here&gt;"</code></pre>
 
           <p class="mt-6 text-sm text-slate-500">Responses include rate limit headers: <span class="kbd">X-RateLimit-Limit</span>, <span class="kbd">X-RateLimit-Remaining</span>.</p>

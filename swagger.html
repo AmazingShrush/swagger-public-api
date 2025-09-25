@@ -23,7 +23,7 @@ info:
     This API allows authenticated users to retrieve device telemetry data, fetch historical data,
     and list registered devices linked to their account. All endpoints require a valid bearer token.
 servers:
-  - url: https://publicapiproject.azurewebsites.net
+  - url: https://api.cloud.trumeter.com
 paths:
   /api/currentData:
     get:
@@ -70,7 +70,7 @@ paths:
       security:
         - XAuthorization: []
 
-  /api/historicData:
+  /api/historicalData:
     get:
       summary: Get historical telemetry data for a device
       description: >
