@@ -8,6 +8,8 @@
   <style>
     body { margin: 0; background: #f9f9f9; }
     .swagger-ui .topbar { background-color: #000; }
+    /* Hide the version text */
+    .info .version { display: none !important; }
   </style>
 </head>
 <body>
@@ -16,6 +18,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
   <script>
     const spec = `
+openapi: 3.0.3
 info:
   title: Trumeter Cloud API
   version: 1.0.0
@@ -266,10 +269,13 @@ components:
           return {
             wrapComponents: {
               AuthorizeBtn: (Original, system) => (props) => {
-                const label = "Available Authorization";
                 const element = Original(props);
-                if (element && element.props && element.props.children) {
-                  element.props.children = label;
+                if (element && element.props && element.props.children && Array.isArray(element.props.children)) {
+                  element.props.children = element.props.children.map(child => 
+                    typeof child === "string" && child.includes("Available Authorizations")
+                      ? child.replace("Available Authorizations", "Available Authorization")
+                      : child
+                  );
                 }
                 return element;
               }
