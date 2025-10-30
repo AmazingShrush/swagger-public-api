@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Trumeter Public API Docs</title>
+  <title>Trumeter Cloud API</title>
   <link rel="icon" type="image/x-icon" href="/assets/favicon.png">
   <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist/swagger-ui.css" />
   <style>
@@ -15,16 +15,62 @@
   <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
   <script>
-    const spec = `openapi: 3.0.0
+    const spec = `
 info:
-  title: Trumeter Public API
+  title: Trumeter Cloud API
   version: 1.0.0
   description: >
-    This API allows authenticated users to retrieve device telemetry data, fetch historical data,
-    and list registered devices linked to their account. All endpoints require a valid bearer token.
+    The Trumeter Cloud API allows authenticated users to retrieve device telemetry, historical data,
+    and registered device details linked to their account. All endpoints require a valid bearer token.
 servers:
   - url: https://api.cloud.trumeter.com
+
 paths:
+
+  /api/deviceList:
+    get:
+      summary: Get list of registered devices
+      description: >
+        Returns a list of all registered devices associated with the customer's account.
+        Each device includes serial number, model type, and optionally user-defined labels and recent activity.
+      responses:
+        '200':
+          description: Successfully retrieved list of devices.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    serialNumber:
+                      type: string
+                      example: "vista-fm-123456"
+                    model:
+                      type: string
+                      example: "VT-FLOW"
+                    userDeviceName:
+                      type: string
+                      example: "Flow Meter - Plant 4"
+                    active:
+                      type: boolean
+                      example: true
+                    lastTelemetryTs:
+                      type: integer
+                      example: 1693330000000
+        '400':
+          description: Missing or invalid authorization token.
+        '403':
+          description: Token is invalid, access is disabled, or quota is exhausted.
+        '429':
+          description: Rate limit exceeded.
+        '502':
+          description: Upstream service error.
+        '500':
+          description: Internal server error.
+      security:
+        - XAuthorization: []
+
   /api/currentData:
     get:
       summary: Get current data for a device
@@ -93,16 +139,16 @@ paths:
           in: query
           required: true
           schema:
-            type: string
-            format: date-time
-          description: Start timestamp in ISO 8601 format.
+            type: integer
+            example: 1693330400000
+          description: Start timestamp in epoch milliseconds.
         - name: to
           in: query
           required: true
           schema:
-            type: string
-            format: date-time
-          description: End timestamp in ISO 8601 format.
+            type: integer
+            example: 1693334000000
+          description: End timestamp in epoch milliseconds.
         - name: agg
           in: query
           required: false
@@ -115,6 +161,7 @@ paths:
           required: false
           schema:
             type: integer
+            example: 60000
           description: Required if \`agg\` is used. Aggregation interval in milliseconds.
       responses:
         '200':
@@ -146,56 +193,61 @@ paths:
       security:
         - XAuthorization: []
 
-  /api/deviceList:
-    get:
-      summary: Get list of registered devices
-      description: >
-        Returns a list of all registered devices associated with the customer's account.
-        Each device includes serial number, model type, and optionally user-defined labels and recent activity.
-      responses:
-        '200':
-          description: Successfully retrieved list of devices.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    serialNumber:
-                      type: string
-                      example: "vista-fm-123456"
-                    model:
-                      type: string
-                      example: "VT-FLOW"
-                    userDeviceName:
-                      type: string
-                      example: "Flow Meter - Plant 4"
-                    active:
-                      type: boolean
-                      example: true
-                    lastTelemetryTs:
-                      type: string
-                      example: "1693330000000"
-        '400':
-          description: Missing or invalid authorization token.
-        '403':
-          description: Token is invalid, access is disabled, or quota is exhausted.
-        '429':
-          description: Rate limit exceeded.
-        '502':
-          description: Upstream service error.
-        '500':
-          description: Internal server error.
-      security:
-        - XAuthorization: []
-
 components:
   securitySchemes:
     XAuthorization:
       type: apiKey
       in: header
-      name: X-Authorization`;
+      name: X-Authorization
+
+  headers:
+    Content-Type:
+      description: The format of the returned content.
+      schema:
+        type: string
+        example: text/plain; charset=utf-8
+    Date:
+      description: Server response date and time in GMT.
+      schema:
+        type: string
+        example: Thu, 30 Oct 2025 14:24:30 GMT
+    Server:
+      description: The backend service responding to the request.
+      schema:
+        type: string
+        example: Kestrel
+    Access-Control-Allow-Origin:
+      description: Indicates allowed cross-origin domains.
+      schema:
+        type: string
+        example: "*"
+    Transfer-Encoding:
+      description: Specifies the form of encoding used to safely transfer the payload.
+      schema:
+        type: string
+        example: chunked
+    X-RateLimit-Limit:
+      description: Maximum number of API calls allowed within the time window.
+      schema:
+        type: string
+        example: "5"
+    X-RateLimit-Window:
+      description: Duration of the rate limit window in seconds.
+      schema:
+        type: string
+        example: "300s"
+    API-Calls-Left:
+      description: Total remaining API calls for the account.
+      schema:
+        type: string
+        example: "499992"
+    X-RateLimit-Remaining:
+      description: Number of calls left in the current rate limit window.
+      schema:
+        type: string
+        example: "3"
+`;
+
     const ui = SwaggerUIBundle({
       spec: jsyaml.load(spec),
       dom_id: '#swagger-ui',
@@ -207,7 +259,24 @@ components:
           req.headers["X-Authorization"] = "Bearer " + token;
         }
         return req;
-      }
+      },
+      // Change "Available Authorizations" to singular
+      plugins: [
+        function() {
+          return {
+            wrapComponents: {
+              AuthorizeBtn: (Original, system) => (props) => {
+                const label = "Available Authorization";
+                const element = Original(props);
+                if (element && element.props && element.props.children) {
+                  element.props.children = label;
+                }
+                return element;
+              }
+            }
+          }
+        }
+      ]
     });
   </script>
 </body>
