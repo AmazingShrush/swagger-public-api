@@ -192,7 +192,7 @@
           <pre class="code"><code>curl -X GET "https://api.trumeter.cloud/api/historicalData?device_serial_no=1234567890&amp;key=voltage&amp;from=2025-05-29T10:36:00&amp;to=2025-05-30T10:36:30" \
   -H "X-Authorization: Bearer &lt;your_token_here&gt;"</code></pre>
 
-          <p class="mt-6 text-sm text-slate-500">Responses include rate limit headers: <span class="kbd">X-RateLimit-Limit</span>, <span class="kbd">X-RateLimit-Remaining</span>.</p>
+          <p class="mt-6 text-sm text-slate-500">Important Responses include headers: <span class="kbd">X-RateLimit-Limit</span>, <span class="kbd">X-RateLimit-Window</span>, <span class="kbd">X-RateLimit-Remaining</span>,<span class="kbd">API-Calls-Left</span>,<span class="kbd">Content-Type</span>.</p>
         </div>
       </div>
     </section>
