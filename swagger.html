@@ -152,20 +152,6 @@ paths:
             type: integer
             example: 1693334000000
           description: End timestamp in epoch milliseconds.
-        - name: agg
-          in: query
-          required: false
-          schema:
-            type: string
-            enum: [AVG, MIN, MAX, SUM, COUNT, NONE]
-          description: Optional aggregation function.
-        - name: interval
-          in: query
-          required: false
-          schema:
-            type: integer
-            example: 60000
-          description: Required if \`agg\` is used. Aggregation interval in milliseconds.
       responses:
         '200':
           description: Successfully retrieved historical data.
